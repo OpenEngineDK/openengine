@@ -11,6 +11,7 @@
 
 import string, sys, platform, subprocess, os, os.path as path
 import urllib, urllib2, zipfile, tarfile
+import errno    
 
 def deleteFolder(folder):
     '''
@@ -20,6 +21,21 @@ def deleteFolder(folder):
         execute("rmdir /S /Q %s" % folder) 
     else:
         execute("rm -r %s" % folder)
+
+def mkdirp(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
+def createFolders():
+    mkdirp('dependencies')
+    mkdirp('extensions')
+    mkdirp('libraries')
+    mkdirp('projects')
 
 class ExecError(Exception):
     "Exception thrown if execute(cmd) exited with error code != 0"

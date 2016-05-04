@@ -14,7 +14,9 @@ import string, sys, subprocess, os, os.path as path
 import urllib, urllib2, zipfile, tarfile
 
 # import the helpers from oelib.py
-from oelib import deleteFolder, printCommands, error, execute, system, ExecError, cores
+from oelib import deleteFolder, printCommands, error, execute, system, ExecError, cores, createFolders, mkdirp
+
+createFolders();
 
 def commands():
     return ((update,  "update"),
@@ -93,7 +95,8 @@ def install(dist):
     """
     if dist.startswith("proj:"):
         add_to_default("projects/%s/%s.dist" % (dist[5:],dist[5:]),
-                       "http://openengine.dk/code/projects/%s/%s.dist" % (dist[5:], dist[5:]))
+                       "https://raw.githubusercontent.com/OpenEngineDK/projects-%s/master/%s.dist"
+                       % (dist[5:], dist[5:]))
         file = "default.dist"
     else:
         file = dist #.split("/")[-1]
@@ -179,6 +182,7 @@ def run_git_reop(repos):
         repoP = path.join(p,".git")
         if not path.isdir(repoP):
             print "Creating git repo"
+            mkdirp(repoP);
             execute("git --git-dir=%s --work-tree=%s init" % (repoP,p))
 
         execute("git --git-dir=%s --work-tree=%s pull %s %s" % (repoP,p,r,b))
