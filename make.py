@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -------------------------------------------------------------------
 # Helper script to manage compiling and running OpenEngine.
 # For usage information run ./make.py help
@@ -98,8 +98,8 @@ def help():
     """
     help          -- this message
     """
-    print "Small script to help compiling and running OpenEngine."
-    print "Some useful targets are:"
+    print("Small script to help compiling and running OpenEngine.")
+    print("Some useful targets are:")
     printCommands(commands())
 
 def deps():
@@ -113,7 +113,7 @@ def deps():
         if system("win"):
             execute("cmake -DDEPS=true -G \"MinGW Makefiles\" ../")
         else: 
-            execute("cmake -DDEPS=true ../")
+            execute("cmake -DDEPS=true -G \"Unix Makefiles\" ../")
     sys_exec_make("all")
     sys_exec_make("install")
     os.chdir(owd)
@@ -164,7 +164,7 @@ def sys_exec_make(target):
 def main():
     # check run location
     if not path.isfile(path.join(os.getcwd(), "make.py")):
-        print "You must run make.py from the OpenEngine root directory."
+        print("You must run make.py from the OpenEngine root directory.")
     # if no command is given run default
     if len(sys.argv) < 2:
         build()
@@ -178,13 +178,13 @@ def main():
     elif len(sys.argv) == 2:
         make(sys.argv[1])
     else:
-        print "Invalid command."
-        print "Possible commands are:"
+        print("Invalid command.")
+        print("Possible commands are:")
         printCommands(commands())
         sys.exit(1)
 
 if __name__ == '__main__':
     try: main()
-    except ExecError, e:
-        print e
+    except ExecError as e:
+        print(e)
         sys.exit(1)

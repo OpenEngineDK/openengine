@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -------------------------------------------------------------------
 # Helper script to manage OpenEngine distributions.
 # For usage information run ./dist.py help
@@ -11,12 +11,12 @@
 #--------------------------------------------------------------------
 
 import string, sys, subprocess, os, os.path as path
-import urllib, urllib2, zipfile, tarfile
+import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, zipfile, tarfile
 
 # import the helpers from oelib.py
 from oelib import deleteFolder, printCommands, error, execute, system, ExecError, cores, createFolders, mkdirp
 
-createFolders();
+createFolders()
 
 def commands():
     return ((update,  "update"),
@@ -68,10 +68,10 @@ def data(*args):
     if dists:
         d = [ (p, r) for s, p, r in parse(*dists)["data"] if system(s)]
         if d: run_data(d)
-        else: print "Found no data entries for platform %s." % sys.platform
+        else: print(("Found no data entries for platform %s." % sys.platform))
     d = [ (p, r) for s, p, r in parse(*args)["data"] if system(s)]
     if d: run_data(d)
-    else: print "Found no data entries for platform %s." % sys.platform
+    else: print(("Found no data entries for platform %s." % sys.platform))
 
 def add_to_default(distfile,url):
     default = "default.dist"
@@ -82,7 +82,7 @@ def add_to_default(distfile,url):
         for (fil,u) in es['dist']:
             if fil == absfile:
                 found = True
-                print "This project is already installed!"                    
+                print("This project is already installed!")                    
     if not found:
         f = open(default,"a")
         f.write("dist /%s %s\n" % (distfile, url))
@@ -128,12 +128,12 @@ def darcs(*args):
     cmd = " ".join(args)
     ds = [path.join("extensions", e) for e in os.listdir("extensions")] + \
          [path.join("projects", p) for p in os.listdir("projects")]
-    print "**** OpenEngine"
+    print("**** OpenEngine")
     try: execute("darcs %s --repodir %s" % (cmd, "."))
     except ExecError: pass
     for d in ds:
         if path.isdir(path.join(d, "_darcs")):
-            print "**** %s" % d
+            print(("**** %s" % d))
             try: execute("darcs %s --repodir %s" % (cmd, d))
             except ExecError: pass
 
@@ -173,15 +173,15 @@ def usage():
     """
     help           -- this message
     """
-    print "Small script to help working on OpenEngine repositories."
-    print "Some useful targets are:"
+    print("Small script to help working on OpenEngine repositories.")
+    print("Some useful targets are:")
     printCommands(commands())
 
 def run_git_reop(repos):
     for p,r,b in repos:
         repoP = path.join(p,".git")
         if not path.isdir(repoP):
-            print "Creating git repo"
+            print("Creating git repo")
             mkdirp(repoP);
             execute("git --git-dir=%s --work-tree=%s init" % (repoP,p))
 
@@ -197,7 +197,7 @@ def run_repo(repos):
             cmd = "pull"
         else:
             cmd = "get"
-        print "Updating %s from %s" % (relpath(p), r)
+        print(("Updating %s from %s" % (relpath(p), r)))
         execute("darcs %s %s --repodir %s" % (cmd, r, p))
 
 def get_windows_username():
@@ -207,8 +207,8 @@ def get_windows_username():
         username = f.readline()
         f.close()
     else: #otherwise ask user for input, and make one
-        print 'daimi.username.txt not found'
-        answer=raw_input('Please enter your daimi user name: ')
+        print('daimi.username.txt not found')
+        answer=input('Please enter your daimi user name: ')
         f = open("daimi.username.txt", "w")
         f.writelines(answer)
         f.close()
@@ -219,7 +219,7 @@ def get_windows_username():
 
 def commit_git_repo(user, repos):
     for p,r,b in repos:
-        print "Commiting %s to %s (%s)" % (relpath(p), r, b)
+        print(("Commiting %s to %s (%s)" % (relpath(p), r, b)))
         repoP = path.join(p, ".git")
         execute("git --git-dir=%s --work-tree=%s push %s %s" % (repoP,p,r,b))
         
@@ -234,7 +234,7 @@ def commit_repo(user, repos):
         if user: user = user + "@"
         else: user = ""
     for p,r in repos:
-        print "Commiting %s to %s" % (relpath(p), r)
+        print(("Commiting %s to %s" % (relpath(p), r)))
         execute("darcs push %s%s --repodir %s" % (user, r, p))
 
 def run_data(data):
@@ -245,13 +245,13 @@ def run_data(data):
         file = path.join(dir, res.split("/")[-1])
         # ignore files that exist
         if path.isfile(file):
-            print "Skipping exiting file %s" % relpath(file)
+            print(("Skipping exiting file %s" % relpath(file)))
             continue
         # make the containing directory
         if not path.isdir(dir):
             os.makedirs(dir)
-        print "Retrieving %s from %s" % (relpath(file), res)
-        f, h = urllib.urlretrieve(res, file)
+        print(("Retrieving %s from %s" % (relpath(file), res)))
+        f, h = urllib.request.urlretrieve(res, file)
         unpack(h.gettype(), file, dir)
 
 def get_dists(*args):
@@ -269,18 +269,18 @@ def get_dists_helper(ds,dists):
         fp = distfile #path.join(dir,dist.split("/")[-1])
         if fp not in dists:
             if not path.isfile(fp):
-                print "== Download the dist (%s) to tmp!" % (dist)
-                req = urllib2.Request(dist)
-                try: urllib2.urlopen(req)
-                except urllib2.URLError, e:
+                print(("== Download the dist (%s) to tmp!" % (dist)))
+                req = urllib.request.Request(dist)
+                try: urllib.request.urlopen(req)
+                except urllib.error.URLError as e:
                     error("Could not fetch dist file: %s, error: %s" % (dist,e))
-                except ValueError, e:
+                except ValueError as e:
                     pass
                 tmpfld = "tmp"
                 if not path.isdir(tmpfld):
                    os.makedirs(tmpfld)                
                 file = path.join(tmpfld,dist.split("/")[-1])
-                urllib.urlretrieve(dist, file)
+                urllib.request.urlretrieve(dist, file)
                 dists.append( file )
             else:
                 dists.append( fp )
@@ -323,12 +323,14 @@ def parse(*args):
             if len(l) == 0 or l[0] == "#":
                 continue
             # validate entry length
-            e = filter(len, l.split())
+            e = list(filter(len, l.split()))
             if len(e) < 3:
                 errors.append("%s(%i): invalid entry." % (file, line))
+                continue
             # check if the entry path is valid
             if e[1][0] != "/":
                 errors.append("%s(%i): invalid path '%s'" % (file, line, e[1]))
+                continue
             # if no errors were found and the tuple is not in the set add it
             if not errors:
                 p = path.join(os.getcwd(), e[1][1:])
@@ -364,8 +366,8 @@ def unpack(type, file, dir):
         "application/x-tar" : untar,
         "application/x-gzip" : untar
         }
-    if type in handles.keys():
-        print "Unpacking %s" % relpath(file)
+    if type in list(handles.keys()):
+        print(("Unpacking %s" % relpath(file)))
         handles[type](file, dir)
 
 def untar(file, dir):
@@ -391,7 +393,7 @@ def mkrepo(name, dir, repo):
     loc = path.join(dir, name)
     # flags = darcs_version().startswith("2") and "--old-fashioned-inventory" or ""
     flags = "" # We will not create darcs-1 repos any more \o/
-    print "Creating new repository at: %s" % loc
+    print(("Creating new repository at: %s" % loc))
     execute("darcs get %s --repodir %s" % (repo, loc))
     deleteFolder(path.join(loc,"_darcs"))
     execute("darcs init %s --repodir %s" % (flags, loc))
@@ -400,15 +402,16 @@ def relpath(path):
     return path.replace(os.getcwd(), "")
 
 def ask(msg, default=True):
-    a = raw_input("%s [%s]? " % (msg, default and "Yn" or "yN"))
+
+    a = input("%s [%s]? " % (msg, default and "Yn" or "yN"))
     while True:
-        if a is "":
+        if a == "":
             return default
-        elif a is "y":
+        elif a == "y":
             return True
-        elif a is "n":
+        elif a == "n":
             return False
-        a = raw_input("invalid answer. please type 'y' or 'n' ")
+        a = input("invalid answer. please type 'y' or 'n' ")
 
 def darcs_version():
     return subprocess.Popen("darcs --version",shell=True,stdout=subprocess.PIPE).communicate()[0]
@@ -416,7 +419,7 @@ def darcs_version():
 def main():
     # check run location
     if not path.isfile(path.join(os.getcwd(), "dist.py")):
-        print "You must run dist.py from the OpenEngine root directory."
+        print("You must run dist.py from the OpenEngine root directory.")
     # if no command is given run default
     if len(sys.argv) < 2:
         update()
@@ -429,8 +432,8 @@ def main():
     try:
         fn(*sys.argv[2:])
     except TypeError:
-        print "Invalid command."
-        print "Possible commands are:"
+        print("Invalid command.")
+        print("Possible commands are:")
         printCommands(commands())
         sys.exit(1)
 

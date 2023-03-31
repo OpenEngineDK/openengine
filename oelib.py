@@ -10,7 +10,7 @@
 #--------------------------------------------------------------------
 
 import string, sys, platform, subprocess, os, os.path as path
-import urllib, urllib2, zipfile, tarfile
+import urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, zipfile, tarfile
 import errno    
 
 def deleteFolder(folder):
@@ -41,7 +41,7 @@ class ExecError(Exception):
     "Exception thrown if execute(cmd) exited with error code != 0"
 
 def printCommands(cmds):
-    print "\n".join([f.__doc__.strip() for f,c in cmds])
+    print(("\n".join([f.__doc__.strip() for f,c in cmds])))
 
 def execute(cmd):
     '''
@@ -57,7 +57,7 @@ def error(err):
     '''
     Print error message, and exit
     '''
-    print err
+    print(err)
     sys.exit(1)
 
 def system(name):
