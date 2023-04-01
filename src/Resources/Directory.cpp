@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 #include <Logging/Logger.h>
 
 namespace OpenEngine {

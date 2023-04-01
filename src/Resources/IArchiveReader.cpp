@@ -74,12 +74,13 @@ ISerializable* IArchiveReader::ReadObject_(string key) {
     return obj;
 }
 
-shared_ptr<ISerializable> IArchiveReader::ReadObjectPtr_(string key) {
+
+boost::shared_ptr<ISerializable> IArchiveReader::ReadObjectPtr_(string key) {
     size_t s = Begin(key);
     if (s != 0)
         throw Exception("Invalid size in ReadObject");
     unsigned int idx = ReadIndex();
-    shared_ptr<ISerializable> obj = objectsPtr[idx];
+    boost::shared_ptr<ISerializable> obj = objectsPtr[idx];
     if (!obj.get()) {
         SerializableObjectTags tag = (SerializableObjectTags)ReadInt(TAG_KEY);
 

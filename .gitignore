@@ -1,3 +1,7 @@
 __pycache__
 build/
-
+.vscode
+extensions/
+projects/
+tmp/
+default.dist

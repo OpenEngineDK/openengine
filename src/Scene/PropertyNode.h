@@ -63,6 +63,8 @@ public:
         int AsInt();
         float AsFloat();
         std::string AsString();
+        
+        Property(); // TODO: hack
     private:
         friend class PropertyNode;
         // needed for creating default entries in stl-maps
@@ -73,7 +75,6 @@ public:
         float val;          // stores an int or float value
         std::string str;    // stores a string value
         // constructing is private to PropertyNode
-        Property();
         Property(int v);
         Property(float v);
         Property(std::string v);
